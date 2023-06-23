@@ -1,0 +1,54 @@
+task delombokedSourcesJars(type: Jar, dependsOn: classes) {
+    from sourceSets.main.delombokTask {
+        include "**/*.java"
+        filter { String line -> line.replaceAll('^\\s*import lombok\\..*$', '') }
+    }
+    from('src/main/resources') {
+        include '**/*'
+    }
+    from {
+        configurations.sourceLibsTransitive.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    archiveClassifier.set("sources")
+}
+
+javadoc {
+    source = sourceSets.main.delombokTask
+    failOnError = false
+}
+
+java {
+    withJavadocJar()
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.xmlLibs.collect {
+            it.isDirectory() ? it : zipTree(it).matching {
+                include "**/*.gwt.xml"
+            }
+        }
+    }
+}
+
+publishing {
+    publications {
+        gdxProjectTrianglePlatforming(MavenPublication) {
+            pom {
+                name = "gdx-ProjectTrianglePlatforming"
+                description = "A Tiled Map Object / Collision Layer to Box2D Parser for libGDX - lyze237/gdx-ProjectTrianglePlatforming"
+                url = "https://github.com/lyze237/gdx-ProjectTrianglePlatforming"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+            }
+            from components.java
+
+            artifact delombokedSourcesJars
+        }
+    }
+}

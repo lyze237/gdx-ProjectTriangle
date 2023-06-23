@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'io.freefair.lombok' version '6.3.0'
+}
+
+apply from: 'utils.gradle'
+group = 'dev.lyze'
+version = "1.0.${getGitHash()}"
+apply from: 'publishing.gradle'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.github.lyze237:gdx-Clipper2:gdxClipper2Version"
+
+    implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+    implementation "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+}
+
+java {
+    sourceCompatibility = 8
+    targetCompatibility = 8
+}
+
+compileTestJava {
+    sourceCompatibility = 8
+    targetCompatibility = 8
+}
+
+compileJava {
+    options.incremental = true
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
