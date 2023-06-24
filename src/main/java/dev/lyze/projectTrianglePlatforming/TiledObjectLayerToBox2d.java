@@ -15,7 +15,6 @@ import lombok.var;
 
 @AllArgsConstructor
 public class TiledObjectLayerToBox2d {
-    private final Vector2 tempVector = new Vector2();
 
     private final TiledObjectLayerToBox2dOptions options;
 
@@ -55,9 +54,7 @@ public class TiledObjectLayerToBox2d {
     }
 
     private void extractRectangle(World world, Rectangle rectangle) {
-        rectangle.getCenter(tempVector);
-
-        MapUtils.extractRectangle(world, tempVector.x, tempVector.y, rectangle.width * options.getScale(), rectangle.height * options.getScale());
+        MapUtils.extractRectangle(world, rectangle.x * options.getScale(), rectangle.y * options.getScale(), rectangle.width * options.getScale(), rectangle.height * options.getScale());
     }
 
     private void extractCircle(World world, Ellipse ellipse) {

@@ -43,7 +43,7 @@ public class MapUtils {
 
     public static void extractRectangle(World world, float x, float y, float width, float height) {
         var bodyDef = Box2dUtils.createStaticBodyDef();
-        bodyDef.position.set(x, y);
+        bodyDef.position.set(x + width / 2f, y + height / 2f);
 
         var body = world.createBody(bodyDef);
 

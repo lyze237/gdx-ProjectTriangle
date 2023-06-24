@@ -9,10 +9,16 @@ import lombok.var;
 @UtilityClass
 public class PolygonUtils {
     public float[] transformVertices(float[] vertices, float scale) {
+        return transformVertices(vertices, scale, 0, 0);
+    }
+
+    public float[] transformVertices(float[] vertices, float scale, float x, float y) {
         float[] newVertices = new float[vertices.length];
 
-        for (int i = 0; i < vertices.length; i++)
-            newVertices[i] = vertices[i] * scale;
+        for (int i = 0; i < vertices.length; i += 2) {
+            newVertices[i] = vertices[i] * scale + x;
+            newVertices[i + 1] = vertices[i + 1] * scale + y;
+        }
 
         return newVertices;
     }

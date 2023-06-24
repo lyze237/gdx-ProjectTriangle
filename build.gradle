@@ -20,10 +20,15 @@ apply from: 'publishing.gradle'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    xmlLibs
 }
 
 dependencies {
-    implementation "com.github.lyze237:gdx-Clipper2:gdxClipper2Version"
+    implementation "com.github.lyze237:gdx-Clipper2:$gdxClipper2Version"
 
     implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
