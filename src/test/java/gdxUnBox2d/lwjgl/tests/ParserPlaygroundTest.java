@@ -3,7 +3,9 @@ package gdxUnBox2d.lwjgl.tests;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapGroupLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +15,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dev.lyze.projectTrianglePlatforming.TiledObjectLayerToBox2d;
 import dev.lyze.projectTrianglePlatforming.TiledObjectLayerToBox2dOptions;
+import dev.lyze.projectTrianglePlatforming.TiledTileCollisionToBox2d;
+import dev.lyze.projectTrianglePlatforming.TiledTileCollisionToBox2dOptions;
 import gdxUnBox2d.lwjgl.LibgdxLwjglUnitTest;
 import lombok.var;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +48,15 @@ public class ParserPlaygroundTest extends LibgdxLwjglUnitTest {
                 .scale(1f / tileWidth)
                 .throwOnInvalidObject(true)
                 .build());
-        builder.parseAllLayers(map, world);
+        //builder.parseAllLayers(map, world);
+
+        var secondBuilder = new TiledTileCollisionToBox2d(TiledTileCollisionToBox2dOptions.builder()
+                .scale(1f / tileWidth)
+                .combineTileCollisions(false)
+                .build());
+
+        //secondBuilder.parseLayer(((TiledMapTileLayer) map.getLayers().get("Tile Layer 2")), world);
+        secondBuilder.parseAllLayers(map, world);
     }
 
     @Test

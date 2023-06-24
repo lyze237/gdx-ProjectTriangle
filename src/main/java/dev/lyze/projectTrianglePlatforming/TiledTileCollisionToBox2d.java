@@ -29,7 +29,7 @@ public class TiledTileCollisionToBox2d {
                 parseLayer(((TiledMapTileLayer) layer), world);
     }
 
-    private void parseLayer(TiledMapTileLayer layer, World world) {
+    public void parseLayer(TiledMapTileLayer layer, World world) {
         PathsD subjects = new PathsD();
         for (int x = 0; x < layer.getWidth(); x++)
             for (int y = 0; y < layer.getHeight(); y++)
@@ -41,7 +41,7 @@ public class TiledTileCollisionToBox2d {
         if (cell == null)
             return;
 
-        for (var obj : layer.getObjects()) {
+        for (var obj : cell.getTile().getObjects()) {
             if (obj instanceof EllipseMapObject) {
                 extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse());
             } else if (obj instanceof RectangleMapObject) {
@@ -55,7 +55,7 @@ public class TiledTileCollisionToBox2d {
     }
 
     private void extractPolygon(World world, int x, int y, PathsD subjects, Polygon polygon) {
-        var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale(), x, y);
+        var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale(), x * options.getScale(), y * options.getScale());
 
         if (options.isCombineTileCollisions()) {
             var doubleVertices = ArrayUtils.convertToDoubleArray(vertices);
