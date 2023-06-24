@@ -52,7 +52,6 @@ public class ParserPlaygroundTest extends LibgdxLwjglUnitTest {
 
         var secondBuilder = new TiledTileCollisionToBox2d(TiledTileCollisionToBox2dOptions.builder()
                 .scale(1f / tileWidth)
-                .combineTileCollisions(false)
                 .build());
 
         //secondBuilder.parseLayer(((TiledMapTileLayer) map.getLayers().get("Tile Layer 2")), world);

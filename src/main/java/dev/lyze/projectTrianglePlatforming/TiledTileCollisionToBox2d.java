@@ -1,6 +1,8 @@
 package dev.lyze.projectTrianglePlatforming;
 
 import clipper2.Clipper;
+import clipper2.core.FillRule;
+import clipper2.core.PathD;
 import clipper2.core.PathsD;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
@@ -30,10 +32,25 @@ public class TiledTileCollisionToBox2d {
     }
 
     public void parseLayer(TiledMapTileLayer layer, World world) {
-        PathsD subjects = new PathsD();
+        var subjects = new PathsD();
+
         for (int x = 0; x < layer.getWidth(); x++)
             for (int y = 0; y < layer.getHeight(); y++)
                 parseCell(layer, x, y, subjects, world);
+
+        var result = Clipper.Union(subjects, FillRule.NonZero);
+        for (PathD path : result) {
+            var vertices = new float[path.size() * 2];
+
+            for (int i = 0; i < path.size(); i++) {
+                var point = path.get(i);
+
+                vertices[i * 2] = (float) point.x;
+                vertices[i * 2 + 1] = (float) point.y;
+            }
+
+            MapUtils.extractPolygon(world, vertices);
+        }
     }
 
     private void parseCell(TiledMapTileLayer layer, int x, int y, PathsD subjects, World world) {
