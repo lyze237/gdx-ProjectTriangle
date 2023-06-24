@@ -3,6 +3,7 @@ package dev.lyze.projectTrianglePlatforming.utils;
 import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ShortArray;
+import dev.lyze.projectTrianglePlatforming.triangulators.ITriangulator;
 import lombok.experimental.UtilityClass;
 import lombok.var;
 
@@ -23,14 +24,11 @@ public class PolygonUtils {
         return newVertices;
     }
 
-    public Array<float[]> triangulate(float[] vertices) {
-        var triangulator = new EarClippingTriangulator();
-
-        var indexes = triangulator.computeTriangles(vertices);
+    public Array<float[]> triangulate(float[] vertices, ITriangulator triangulator) {
+        var indexes = triangulator.triangulate(vertices);
         var triangulatedVertices = applyIndexes(vertices, indexes);
-        var triangles = convertToTriangles(triangulatedVertices);
 
-        return triangles;
+        return convertToTriangles(triangulatedVertices);
     }
 
     private float[] applyIndexes(float[] vertices, ShortArray indexes) {

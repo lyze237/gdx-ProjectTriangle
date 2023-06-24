@@ -44,7 +44,7 @@ public class TiledObjectLayerToBox2d {
 
         float[] vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale());
 
-        MapUtils.extractPolygon(world, vertices);
+        MapUtils.extractPolygon(world, vertices, options.getTriangulator());
     }
 
     private void extractPolyline(World world, Polyline polyline) {

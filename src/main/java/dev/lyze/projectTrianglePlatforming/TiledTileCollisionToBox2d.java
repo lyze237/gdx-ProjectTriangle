@@ -21,8 +21,6 @@ import lombok.var;
 
 @AllArgsConstructor
 public class TiledTileCollisionToBox2d {
-    private final Vector2 tempVector = new Vector2();
-
     private final TiledTileCollisionToBox2dOptions options;
 
     public void parseAllLayers(TiledMap map, World world) {
@@ -49,7 +47,7 @@ public class TiledTileCollisionToBox2d {
                 vertices[i * 2 + 1] = (float) point.y;
             }
 
-            MapUtils.extractPolygon(world, vertices);
+            MapUtils.extractPolygon(world, vertices, options.getTriangulator());
         }
     }
 
@@ -81,7 +79,7 @@ public class TiledTileCollisionToBox2d {
             if (polygon.getVertices().length > 8 && !options.isTriangulateInsteadOfThrow())
                 throw new IllegalArgumentException("Polygon vertices > 8");
             
-            MapUtils.extractPolygon(world, vertices);
+            MapUtils.extractPolygon(world, vertices, options.getTriangulator());
         }
     }
 

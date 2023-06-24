@@ -1,22 +1,19 @@
 package dev.lyze.projectTrianglePlatforming.utils;
 
-import com.badlogic.gdx.math.Ellipse;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Polyline;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
+import dev.lyze.projectTrianglePlatforming.triangulators.ITriangulator;
 import lombok.experimental.UtilityClass;
 import lombok.var;
 
 @UtilityClass
 public class MapUtils {
-    public void extractPolygon(World world, float[] vertices) {
+    public void extractPolygon(World world, float[] vertices, ITriangulator triangulator) {
         var body = Box2dUtils.createStaticBody(world);
 
         if (vertices.length / 2 <= 8) {
             createPolygonShape(body, vertices);
         } else {
-            var triangles = PolygonUtils.triangulate(vertices);
+            var triangles = PolygonUtils.triangulate(vertices, triangulator);
 
             for (float[] triangle : triangles)
                 createPolygonShape(body, triangle);
