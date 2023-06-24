@@ -35,6 +35,19 @@ dependencies {
 
     implementation "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+
+    testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+    testImplementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+    testImplementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
 java {
@@ -45,6 +58,43 @@ java {
 compileTestJava {
     sourceCompatibility = 8
     targetCompatibility = 8
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        exceptionFormat = "full"
+        showStackTraces = true
+        showExceptions = true
+        showCauses = true
+        displayGranularity = 0
+        events = [
+                "standardOut",
+                "standardError",
+                "started",
+                "passed",
+                "skipped",
+                "failed"
+        ]
+        showStandardStreams = true
+    }
+
+    reports {
+        junitXml.configure {
+            enabled(true)
+        }
+    }
+
+    if (project.hasProperty("lwjgl")) {
+        useJUnitPlatform {
+            includeTags "lwjgl"
+        }
+    } else {
+        useJUnitPlatform {
+            excludeTags 'lwjgl'
+        }
+    }
 }
 
 compileJava {
