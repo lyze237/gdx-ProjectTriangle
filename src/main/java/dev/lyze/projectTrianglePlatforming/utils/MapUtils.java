@@ -10,7 +10,7 @@ public class MapUtils {
     public void extractPolygon(World world, float[] vertices, ITriangulator triangulator) {
         var body = Box2dUtils.createStaticBody(world);
 
-        if (vertices.length / 2 <= 8) {
+        if (vertices.length / 2 <= 8 && !PolygonUtils.isConcave(vertices)) {
             createPolygonShape(body, vertices);
         } else {
             var triangles = PolygonUtils.triangulate(vertices, triangulator);
@@ -63,5 +63,4 @@ public class MapUtils {
         Box2dUtils.createFixture(body, shape);
         shape.dispose();
     }
-
 }

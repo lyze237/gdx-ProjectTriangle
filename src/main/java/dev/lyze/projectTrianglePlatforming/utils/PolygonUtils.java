@@ -1,6 +1,5 @@
 package dev.lyze.projectTrianglePlatforming.utils;
 
-import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ShortArray;
 import dev.lyze.projectTrianglePlatforming.triangulators.ITriangulator;
@@ -25,13 +24,12 @@ public class PolygonUtils {
     }
 
     public Array<float[]> triangulate(float[] vertices, ITriangulator triangulator) {
-        var indexes = triangulator.triangulate(vertices);
-        var triangulatedVertices = applyIndexes(vertices, indexes);
+        var triangulatedVertices = triangulator.triangulate(vertices);
 
         return convertToTriangles(triangulatedVertices);
     }
 
-    private float[] applyIndexes(float[] vertices, ShortArray indexes) {
+    public float[] applyIndexes(float[] vertices, ShortArray indexes) {
         float[] newVertices = new float[indexes.size * 2];
 
         for (short i = 0; i < indexes.size; i++) {
@@ -53,5 +51,48 @@ public class PolygonUtils {
         }
 
         return triangles;
+    }
+
+    // chat gpt
+    public boolean isConcave(float[] polygon) {
+        int n = polygon.length / 2;
+
+        if (n < 3) {
+            // A polygon with less than 3 vertices is neither concave nor convex
+            return false;
+        }
+
+        boolean isClockwise = false;
+        boolean isCounterClockwise = false;
+
+        for (int i = 0; i < n; i++) {
+            int prevIndex = (i + n - 1) % n;
+            int currentIndex = i;
+            int nextIndex = (i + 1) % n;
+
+            float crossProduct = crossProduct(
+                    polygon[prevIndex * 2], polygon[prevIndex * 2 + 1],
+                    polygon[currentIndex * 2], polygon[currentIndex * 2 + 1],
+                    polygon[nextIndex * 2], polygon[nextIndex * 2 + 1]);
+
+            if (crossProduct > 0) {
+                isCounterClockwise = true;
+            } else if (crossProduct < 0) {
+                isClockwise = true;
+            }
+
+            if (isClockwise && isCounterClockwise) {
+                // The polygon has both clockwise and counterclockwise turns, so it is concave
+                return true;
+            }
+        }
+
+        // If the polygon is either entirely clockwise or entirely counterclockwise, it is convex
+        return false;
+    }
+
+    private float crossProduct(float ax, float ay, float bx, float by, float cx, float cy) {
+        // Calculate the cross product of vectors AB and BC
+        return (bx - ax) * (cy - by) - (by - ay) * (cx - bx);
     }
 }

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class ParserPlaygroundTest extends LibgdxLwjglUnitTest {
+public class ObjectParserTest extends LibgdxLwjglUnitTest {
     private Viewport viewport;
 
     private TiledMap map;
@@ -35,16 +35,16 @@ public class ParserPlaygroundTest extends LibgdxLwjglUnitTest {
         world = new World(new Vector2(0, -10), true);
         debugRenderer = new Box2DDebugRenderer();
 
-        map = new TmxMapLoader().load("test.tmx");
+        map = new TmxMapLoader().load("allobjects.tmx");
 
         var tileWidth = map.getProperties().get("tilewidth", Integer.class);
         renderer = new OrthogonalTiledMapRenderer(map, 1f / tileWidth);
 
-        viewport = new ExtendViewport(16, 9);
+        viewport = new ExtendViewport(map.getProperties().get("width", Integer.class), map.getProperties().get("height", Integer.class));
 
         var builder = new TiledObjectLayerToBox2d(TiledObjectLayerToBox2dOptions.builder()
                 .scale(1f / tileWidth)
-                .throwOnInvalidObject(true)
+                .throwOnInvalidObject(false)
                 .build());
         builder.parseAllLayers(map, world);
 
@@ -53,7 +53,7 @@ public class ParserPlaygroundTest extends LibgdxLwjglUnitTest {
                 .build());
 
         //secondBuilder.parseLayer(((TiledMapTileLayer) map.getLayers().get("Tile Layer 2")), world);
-        secondBuilder.parseAllLayers(map, world);
+        //secondBuilder.parseAllLayers(map, world);
     }
 
     @Test

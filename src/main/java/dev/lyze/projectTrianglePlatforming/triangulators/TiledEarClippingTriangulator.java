@@ -1,13 +1,13 @@
 package dev.lyze.projectTrianglePlatforming.triangulators;
 
 import com.badlogic.gdx.math.EarClippingTriangulator;
-import com.badlogic.gdx.utils.ShortArray;
+import dev.lyze.projectTrianglePlatforming.utils.PolygonUtils;
 
 public class TiledEarClippingTriangulator implements ITriangulator {
     private final EarClippingTriangulator triangulator = new EarClippingTriangulator();
 
     @Override
-    public ShortArray triangulate(float[] vertices) {
-        return triangulator.computeTriangles(vertices);
+    public float[] triangulate(float[] vertices) {
+        return PolygonUtils.applyIndexes(vertices, triangulator.computeTriangles(vertices));
     }
 }

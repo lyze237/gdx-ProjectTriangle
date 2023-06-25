@@ -1,18 +1,15 @@
 package dev.lyze.projectTrianglePlatforming.triangulators;
 
 import com.badlogic.gdx.math.DelaunayTriangulator;
-import com.badlogic.gdx.utils.ShortArray;
+import dev.lyze.projectTrianglePlatforming.utils.PolygonUtils;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@NoArgsConstructor
 public class TiledDelaunayTriangulator implements ITriangulator {
     private final DelaunayTriangulator triangulator = new DelaunayTriangulator();
-    private boolean sorted = true;
 
     @Override
-    public ShortArray triangulate(float[] vertices) {
-        return triangulator.computeTriangles(vertices, sorted);
+    public float[] triangulate(float[] vertices) {
+        return PolygonUtils.applyIndexes(vertices, triangulator.computeTriangles(vertices, false));
     }
 }
