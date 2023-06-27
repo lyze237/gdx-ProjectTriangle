@@ -28,6 +28,20 @@
    <object id="1" x="0" y="0" width="16" height="16"/>
   </objectgroup>
  </tile>
+ <tile id="6">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="0">
+    <polyline points="0,0 3,13 8,4 16,16"/>
+   </object>
+  </objectgroup>
+ </tile>
+ <tile id="7">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="16">
+    <polyline points="0,0 4,-14 7,-3 9,-12 13,-9 14,-2 16,0"/>
+   </object>
+  </objectgroup>
+ </tile>
  <tile id="8">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="16">

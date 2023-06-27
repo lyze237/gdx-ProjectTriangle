@@ -84,11 +84,14 @@ public class TiledTileCollisionToBox2d {
     }
 
     private void extractPolyline(World world, int x, int y, PathsD subjects, Polyline polyline) {
+        var vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), options.getScale(), x * options.getScale(), y * options.getScale());
+
+        MapUtils.extractPolyline(world, vertices);
     }
 
     private void extractRectangle(World world, int x, int y, PathsD subjects, Rectangle rectangle) {
         if (options.isCombineTileCollisions()) {
-            double[] vertices = new double[]{
+            var vertices = new double[]{
                     x * options.getScale() + rectangle.x * options.getScale(), y * options.getScale() + rectangle.y * options.getScale(),
                     x * options.getScale() + rectangle.x * options.getScale() + rectangle.width * options.getScale(), y * options.getScale() + rectangle.y * options.getScale(),
                     x * options.getScale() + rectangle.x * options.getScale() + rectangle.width * options.getScale(), y * options.getScale() + rectangle.y * options.getScale() + rectangle.height * options.getScale(),
@@ -108,5 +111,7 @@ public class TiledTileCollisionToBox2d {
 
             return;
         }
+
+        MapUtils.extractCircle(world, x * options.getScale() + ellipse.x * options.getScale() + ellipse.width / 2f * options.getScale(), y * options.getScale() + ellipse.y * options.getScale() + ellipse.height / 2f * options.getScale(), ellipse.width / 2f * options.getScale());
     }
 }

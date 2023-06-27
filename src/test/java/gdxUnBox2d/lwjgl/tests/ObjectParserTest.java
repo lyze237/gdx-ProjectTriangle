@@ -35,7 +35,7 @@ public class ObjectParserTest extends LibgdxLwjglUnitTest {
         world = new World(new Vector2(0, -10), true);
         debugRenderer = new Box2DDebugRenderer();
 
-        map = new TmxMapLoader().load("allobjects.tmx");
+        map = new TmxMapLoader().load("test.tmx");
 
         var tileWidth = map.getProperties().get("tilewidth", Integer.class);
         renderer = new OrthogonalTiledMapRenderer(map, 1f / tileWidth);
@@ -46,14 +46,14 @@ public class ObjectParserTest extends LibgdxLwjglUnitTest {
                 .scale(1f / tileWidth)
                 .throwOnInvalidObject(false)
                 .build());
-        builder.parseAllLayers(map, world);
+        //builder.parseAllLayers(map, world);
 
         var secondBuilder = new TiledTileCollisionToBox2d(TiledTileCollisionToBox2dOptions.builder()
                 .scale(1f / tileWidth)
                 .build());
 
         //secondBuilder.parseLayer(((TiledMapTileLayer) map.getLayers().get("Tile Layer 2")), world);
-        //secondBuilder.parseAllLayers(map, world);
+        secondBuilder.parseAllLayers(map, world);
     }
 
     @Test
