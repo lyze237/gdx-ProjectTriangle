@@ -13,9 +13,9 @@ public class PolygonUtils {
     }
 
     public float[] transformVertices(float[] vertices, float scale, float x, float y) {
-        float[] newVertices = new float[vertices.length];
+        var newVertices = new float[vertices.length];
 
-        for (int i = 0; i < vertices.length; i += 2) {
+        for (var i = 0; i < vertices.length; i += 2) {
             newVertices[i] = vertices[i] * scale + x;
             newVertices[i + 1] = vertices[i + 1] * scale + y;
         }
@@ -30,9 +30,9 @@ public class PolygonUtils {
     }
 
     public float[] applyIndexes(float[] vertices, ShortArray indexes) {
-        float[] newVertices = new float[indexes.size * 2];
+        var newVertices = new float[indexes.size * 2];
 
-        for (short i = 0; i < indexes.size; i++) {
+        for (var i = 0; i < indexes.size; i++) {
             var index = indexes.get(i);
             newVertices[i * 2] = vertices[index * 2];
             newVertices[i * 2 + 1] = vertices[index * 2 + 1];
@@ -42,10 +42,10 @@ public class PolygonUtils {
     }
 
     private Array<float[]> convertToTriangles(float[] points) {
-        Array<float[]> triangles = new Array<>();
+        var triangles = new Array<float[]>();
 
         for (int i = 0; i < points.length; i += 6) {
-            float[] triangle = new float[6];
+            var triangle = new float[6];
             System.arraycopy(points, i, triangle, 0, triangle.length);
             triangles.add(triangle);
         }
@@ -55,22 +55,21 @@ public class PolygonUtils {
 
     // chat gpt
     public boolean isConcave(float[] polygon) {
-        int n = polygon.length / 2;
+        var n = polygon.length / 2;
 
         if (n < 3) {
             // A polygon with less than 3 vertices is neither concave nor convex
             return false;
         }
 
-        boolean isClockwise = false;
-        boolean isCounterClockwise = false;
+        var isClockwise = false;
+        var isCounterClockwise = false;
 
-        for (int i = 0; i < n; i++) {
-            int prevIndex = (i + n - 1) % n;
-            int currentIndex = i;
-            int nextIndex = (i + 1) % n;
+        for (var currentIndex = 0; currentIndex < n; currentIndex++) {
+            var prevIndex = (currentIndex + n - 1) % n;
+            var nextIndex = (currentIndex + 1) % n;
 
-            float crossProduct = crossProduct(
+            var crossProduct = crossProduct(
                     polygon[prevIndex * 2], polygon[prevIndex * 2 + 1],
                     polygon[currentIndex * 2], polygon[currentIndex * 2 + 1],
                     polygon[nextIndex * 2], polygon[nextIndex * 2 + 1]);

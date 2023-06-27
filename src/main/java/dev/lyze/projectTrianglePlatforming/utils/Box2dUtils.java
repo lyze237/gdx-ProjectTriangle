@@ -7,13 +7,15 @@ import lombok.var;
 @UtilityClass
 public class Box2dUtils {
     public BodyDef createStaticBodyDef() {
-        BodyDef bodyDef = new BodyDef();
+        var bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
+
         return bodyDef;
     }
 
     public Body createStaticBody(World world) {
         var bodyDef = createStaticBodyDef();
+
         return world.createBody(bodyDef);
     }
 

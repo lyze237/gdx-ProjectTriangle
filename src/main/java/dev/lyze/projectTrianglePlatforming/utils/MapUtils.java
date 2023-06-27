@@ -15,7 +15,7 @@ public class MapUtils {
         } else {
             var triangles = PolygonUtils.triangulate(vertices, triangulator);
 
-            for (float[] triangle : triangles)
+            for (var triangle : triangles)
                 createPolygonShape(body, triangle);
         }
     }

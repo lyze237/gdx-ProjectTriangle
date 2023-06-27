@@ -45,13 +45,13 @@ public class TiledObjectLayerToBox2d {
         if (polygon.getVertices().length > 8 && !options.isTriangulateInsteadOfThrow())
             throw new IllegalArgumentException("Polygon vertices > 8");
 
-        float[] vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale());
+        var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale());
 
         MapUtils.extractPolygon(world, vertices, options.getTriangulator());
     }
 
     private void extractPolyline(World world, Polyline polyline) {
-        float[] vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), options.getScale());
+        var vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), options.getScale());
 
         MapUtils.extractPolyline(world, vertices);
     }
