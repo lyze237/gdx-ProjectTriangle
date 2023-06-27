@@ -11,17 +11,26 @@ import com.badlogic.gdx.maps.objects.PolylineMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.math.Ellipse;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Polyline;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
 import dev.lyze.projectTrianglePlatforming.utils.ArrayUtils;
 import dev.lyze.projectTrianglePlatforming.utils.MapUtils;
 import dev.lyze.projectTrianglePlatforming.utils.PolygonUtils;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.var;
 
 @AllArgsConstructor
 public class TiledTileCollisionToBox2d {
     private final TiledTileCollisionToBox2dOptions options;
+
+    @Getter private final Array<float[]> computedPolygons = new Array<>();
+
 
     public void parseAllLayers(TiledMap map, World world) {
         for (MapLayer layer : map.getLayers())
@@ -30,51 +39,54 @@ public class TiledTileCollisionToBox2d {
     }
 
     public void parseLayer(TiledMapTileLayer layer, World world) {
-        var subjects = new PathsD();
+        var subjects = new ObjectMap<String, PathsD>();
 
         for (int x = 0; x < layer.getWidth(); x++)
             for (int y = 0; y < layer.getHeight(); y++)
                 parseCell(layer, x, y, subjects, world);
 
-        var result = Clipper.Union(subjects, FillRule.NonZero);
-        for (PathD path : result) {
-            var vertices = new float[path.size() * 2];
+        for (ObjectMap.Entry<String, PathsD> subject : subjects) {
+            var result = Clipper.Union(subject.value, FillRule.NonZero);
+            for (PathD path : result) {
+                var vertices = new float[path.size() * 2];
 
-            for (int i = 0; i < path.size(); i++) {
-                var point = path.get(i);
+                for (int i = 0; i < path.size(); i++) {
+                    var point = path.get(i);
 
-                vertices[i * 2] = (float) point.x;
-                vertices[i * 2 + 1] = (float) point.y;
+                    vertices[i * 2] = (float) point.x;
+                    vertices[i * 2 + 1] = (float) point.y;
+                }
+
+                computedPolygons.add(vertices);
+                MapUtils.extractPolygon(world, vertices, options.getTriangulator());
             }
-
-            MapUtils.extractPolygon(world, vertices, options.getTriangulator());
         }
     }
 
-    private void parseCell(TiledMapTileLayer layer, int x, int y, PathsD subjects, World world) {
+    private void parseCell(TiledMapTileLayer layer, int x, int y, ObjectMap<String, PathsD> subjects, World world) {
         var cell = layer.getCell(x, y);
         if (cell == null)
             return;
 
         for (var obj : cell.getTile().getObjects()) {
             if (obj instanceof EllipseMapObject) {
-                extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse());
+                extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse(), getMergeType(cell));
             } else if (obj instanceof RectangleMapObject) {
-                extractRectangle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((RectangleMapObject) obj).getRectangle());
+                extractRectangle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((RectangleMapObject) obj).getRectangle(), getMergeType(cell));
             } else if (obj instanceof PolylineMapObject) {
-                extractPolyline(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolylineMapObject) obj).getPolyline());
+                extractPolyline(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolylineMapObject) obj).getPolyline(), getMergeType(cell));
             } else if (obj instanceof PolygonMapObject) {
-                extractPolygon(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolygonMapObject) obj).getPolygon());
+                extractPolygon(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolygonMapObject) obj).getPolygon(), getMergeType(cell));
             }
         }
     }
 
-    private void extractPolygon(World world, int x, int y, PathsD subjects, Polygon polygon) {
+    private void extractPolygon(World world, int x, int y, ObjectMap<String, PathsD> subjects, Polygon polygon, String mergeType) {
         var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale(), x * options.getScale(), y * options.getScale());
 
         if (options.isCombineTileCollisions()) {
             var doubleVertices = ArrayUtils.convertToDoubleArray(vertices);
-            subjects.add(Clipper.MakePath(doubleVertices));
+            createOrAdd(subjects, mergeType, Clipper.MakePath(doubleVertices));
         } else {
             if (polygon.getVertices().length > 8 && !options.isTriangulateInsteadOfThrow())
                 throw new IllegalArgumentException("Polygon vertices > 8");
@@ -83,13 +95,13 @@ public class TiledTileCollisionToBox2d {
         }
     }
 
-    private void extractPolyline(World world, int x, int y, PathsD subjects, Polyline polyline) {
+    private void extractPolyline(World world, int x, int y, ObjectMap<String, PathsD> subjects, Polyline polyline, String mergeType) {
         var vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), options.getScale(), x * options.getScale(), y * options.getScale());
 
         MapUtils.extractPolyline(world, vertices);
     }
 
-    private void extractRectangle(World world, int x, int y, PathsD subjects, Rectangle rectangle) {
+    private void extractRectangle(World world, int x, int y, ObjectMap<String, PathsD> subjects, Rectangle rectangle, String mergeType) {
         if (options.isCombineTileCollisions()) {
             var vertices = new double[]{
                     x * options.getScale() + rectangle.x * options.getScale(), y * options.getScale() + rectangle.y * options.getScale(),
@@ -98,13 +110,13 @@ public class TiledTileCollisionToBox2d {
                     x * options.getScale() + rectangle.x * options.getScale(), y * options.getScale() + rectangle.y * options.getScale() + rectangle.height * options.getScale(),
             };
 
-            subjects.add(Clipper.MakePath(vertices));
+            createOrAdd(subjects, mergeType, Clipper.MakePath(vertices));
         } else {
             MapUtils.extractRectangle(world, x * options.getScale() + rectangle.x * options.getScale(), y * options.getScale() + rectangle.y * options.getScale(), rectangle.width * options.getScale(), rectangle.height * options.getScale());
         }
     }
 
-    private void extractCircle(World world, int x, int y, PathsD subjects, Ellipse ellipse) {
+    private void extractCircle(World world, int x, int y, ObjectMap<String, PathsD> subjects, Ellipse ellipse, String mergeType) {
         if (ellipse.width != ellipse.height) {
             if (options.isThrowOnInvalidObject())
                 throw new IllegalArgumentException("Ellipse objects not supported by Box2D");
@@ -113,5 +125,16 @@ public class TiledTileCollisionToBox2d {
         }
 
         MapUtils.extractCircle(world, x * options.getScale() + ellipse.x * options.getScale() + ellipse.width / 2f * options.getScale(), y * options.getScale() + ellipse.y * options.getScale() + ellipse.height / 2f * options.getScale(), ellipse.width / 2f * options.getScale());
+    }
+
+    private void createOrAdd(ObjectMap<String, PathsD> map, String type, PathD path) {
+        if (!map.containsKey(type))
+            map.put(type, new PathsD());
+
+        map.get(type).add(path);
+    }
+
+    private String getMergeType(TiledMapTileLayer.Cell cell) {
+        return cell.getTile().getProperties().get("mergeType", "default", String.class);
     }
 }

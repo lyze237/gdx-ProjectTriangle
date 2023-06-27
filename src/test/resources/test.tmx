@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="Tiles.tsx"/>
  <layer id="3" name="Tiles" width="20" height="18">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjILBBxiRMKX6kc2hxDxSxIkxDxmzQjGyeQAPAAAb
+   eJxjYBgFQxEwYcGUmofNfErNo5YbmdBoSgE291HDPGQ+NdxKzTiGmUcNgC39UctsGGBEwpTqRzaHEvNIESfGPDYsGNk8AL9YAG4=
   </data>
  </layer>
  <objectgroup id="2" name="Collision">
