@@ -10,13 +10,20 @@ public class MapUtils {
     public void extractPolygon(World world, float[] vertices, ITriangulator triangulator) {
         var body = Box2dUtils.createStaticBody(world);
 
-        if (vertices.length / 2 <= 8 && !PolygonUtils.isConcave(vertices)) {
-            createPolygonShape(body, vertices);
-        } else {
-            var triangles = PolygonUtils.triangulate(vertices, triangulator);
+        var simplifiedVertices = PolygonUtils.simplifyPolygon(vertices);
 
-            for (var triangle : triangles)
-                createPolygonShape(body, triangle);
+        if (simplifiedVertices.length / 2 <= 8 && !PolygonUtils.isConcave(simplifiedVertices)) {
+            createPolygonShape(body, simplifiedVertices);
+        } else {
+            var triangles = PolygonUtils.triangulate(simplifiedVertices, triangulator);
+
+            for (int i = 0; i < triangles.size; i++) {
+                float[] floats = triangles.get(i);
+                if (PolygonUtils.areCollinear(floats[0], floats[1], floats[2], floats[3], floats[4], floats[5]))
+                    continue;
+
+                createPolygonShape(body, floats);
+            }
         }
     }
 

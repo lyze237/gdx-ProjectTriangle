@@ -1,6 +1,7 @@
 package dev.lyze.projectTrianglePlatforming.utils;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.ShortArray;
 import dev.lyze.projectTrianglePlatforming.triangulators.ITriangulator;
 import lombok.experimental.UtilityClass;
@@ -90,8 +91,54 @@ public class PolygonUtils {
         return false;
     }
 
+    // chat gpt
     private float crossProduct(float ax, float ay, float bx, float by, float cx, float cy) {
         // Calculate the cross product of vectors AB and BC
         return (bx - ax) * (cy - by) - (by - ay) * (cx - bx);
+    }
+
+    // chat gpt
+    public static float[] simplifyPolygon(float[] polygon) {
+        var simplifiedPolygon = new FloatArray();
+
+        // Add first point to the simplified polygon
+        simplifiedPolygon.add(polygon[0]);
+        simplifiedPolygon.add(polygon[1]);
+
+        int n = polygon.length;
+
+        for (var i = 2; i < n; i += 2) {
+            var currentX = polygon[i];
+            var currentY = polygon[i + 1];
+            var prevX = simplifiedPolygon.get(simplifiedPolygon.size - 2);
+            var prevY = simplifiedPolygon.get(simplifiedPolygon.size - 1);
+
+            // Check collinearity with the next point or the first point
+            var collinear = false;
+            if (i < n - 2) {
+                var nextX = polygon[i + 2];
+                var nextY = polygon[i + 3];
+                collinear = areCollinear(prevX, prevY, currentX, currentY, nextX, nextY);
+            } else {
+                collinear = areCollinear(prevX, prevY, currentX, currentY, polygon[0], polygon[1]);
+            }
+
+            // Add the point to the simplified polygon if not collinear
+            if (!collinear) {
+                simplifiedPolygon.add(currentX);
+                simplifiedPolygon.add(currentY);
+            }
+        }
+
+        return simplifiedPolygon.shrink();
+    }
+
+    // chat gpt
+    public static boolean areCollinear(float x1, float y1, float x2, float y2, float x3, float y3) {
+        // Cross product of vectors (p1, p2) and (p1, p3)
+        var crossProduct = (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
+
+        // Points are collinear if the cross product is zero
+        return crossProduct == 0;
     }
 }
