@@ -6,9 +6,6 @@ task delombokedSourcesJars(type: Jar, dependsOn: classes) {
     from('src/main/resources') {
         include '**/*'
     }
-    from {
-        configurations.sourceLibsTransitive.collect { it.isDirectory() ? it : zipTree(it) }
-    }
     archiveClassifier.set("sources")
 }
 
