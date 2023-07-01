@@ -1,9 +1,5 @@
 package dev.lyze.projectTrianglePlatforming;
 
-import clipper2.Clipper;
-import clipper2.core.FillRule;
-import clipper2.core.PathD;
-import clipper2.core.PathsD;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
@@ -18,6 +14,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import dev.lyze.clipper2.Clipper;
+import dev.lyze.clipper2.core.FillRule;
+import dev.lyze.clipper2.core.PathD;
+import dev.lyze.clipper2.core.PathsD;
 import dev.lyze.projectTrianglePlatforming.utils.ArrayUtils;
 import dev.lyze.projectTrianglePlatforming.utils.MapUtils;
 import dev.lyze.projectTrianglePlatforming.utils.PolygonUtils;
@@ -47,7 +47,7 @@ public class TiledTileCollisionToBox2d {
 
         for (ObjectMap.Entry<String, PathsD> subject : subjects) {
             var result = Clipper.Union(subject.value, FillRule.NonZero);
-            for (PathD path : result) {
+            for (var path : result) {
                 var vertices = new float[path.size() * 2];
 
                 for (int i = 0; i < path.size(); i++) {
