@@ -2,6 +2,8 @@
 
 A Tiled Layer Objects / Tile Collisions to Box2D Parser for libGDX
 
+Thanks to [@nbNoxid](https://twitter.com/nbNoxid) for the projects name, thanks to [@Zooty6](https://github.com/zooty6) for help with one of the algorithms and for being a great rubber ducky.
+
 ---
 
 [![License](https://img.shields.io/github/license/lyze237/gdx-projecttriangleplatforming)](https://github.com/lyze237/gdx-projecttriangleplatforming/blob/master/LICENSE)
@@ -62,5 +64,57 @@ Additionally, there are a couple important features implemented:
 * Triangulation of polygons when needed
 * Merging of tiles and tile collisions to reduce ghosting issues
 
+---
 
+## Installation
 
+1. Open or create `gradle.properties` in the root folder of your project, add the following line:
+
+```properties
+ptpVersion=6980fbac7a
+clipperVersion=2faa7779bd
+```
+
+Here are the up-to-date version numbers:
+* PTP: [![Jitpack](https://jitpack.io/v/lyze237/gdx-projecttriangleplatforming.svg)](https://jitpack.io/#lyze237/gdx-projecttriangleplatforming)
+* Clipper2: [![](https://jitpack.io/v/lyze237/gdx-Clipper2.svg)](https://jitpack.io/#lyze237/gdx-Clipper2)
+
+2. Add the jitpack repo to your build file.
+
+```groovy
+allprojects {
+    repositories {
+        // ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+3. Add that to your core modules dependencies inside your root `build.gradle` file:
+
+```groovy
+project(":core") {
+    // ...
+
+    dependencies {
+        // ...
+        api "com.github.lyze237:gdx-projecttriangleplatforming:$ptpVersion"
+        api "com.github.lyze237:gdx-Clipper2:$clipperVersion"
+    }
+}
+```
+
+## Html/Gwt project
+
+1. Add the following lines to your html modules dependencies:
+
+```groovy
+implementation "com.github.lyze237:gdx-projecttriangleplatforming:$ptpVersion:sources"
+implementation "com.github.lyze237:gdx-Clipper2:$clipperVersion:sources"
+```
+
+2. In your application's `.gwt.xml` file add (Normally `GdxDefinition.gwt.xml`):
+
+```xml
+<inherits name="dev.lyze.projectTrianglePlatforming"/>
+```
