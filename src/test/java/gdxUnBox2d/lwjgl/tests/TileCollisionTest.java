@@ -1,10 +1,8 @@
 package gdxUnBox2d.lwjgl.tests;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -13,16 +11,17 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import dev.lyze.projectTrianglePlatforming.*;
+import dev.lyze.projectTrianglePlatforming.TiledObjectLayerToBox2d;
+import dev.lyze.projectTrianglePlatforming.TiledObjectLayerToBox2dOptions;
+import dev.lyze.projectTrianglePlatforming.TiledTileCollisionToBox2d;
+import dev.lyze.projectTrianglePlatforming.TiledTileCollisionToBox2dOptions;
 import gdxUnBox2d.lwjgl.LibgdxLwjglUnitTest;
 import lombok.var;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
-public class ObjectParserTest extends LibgdxLwjglUnitTest {
+public class TileCollisionTest extends LibgdxLwjglUnitTest {
     private Viewport viewport;
 
     private OrthogonalTiledMapRenderer renderer;
@@ -35,14 +34,14 @@ public class ObjectParserTest extends LibgdxLwjglUnitTest {
         world = new World(new Vector2(0, -10), true);
         debugRenderer = new Box2DDebugRenderer();
 
-        TiledMap map = new TmxMapLoader().load("objects.tmx");
+        TiledMap map = new TmxMapLoader().load("tileCollision.tmx");
 
         var tileWidth = map.getProperties().get("tilewidth", Integer.class);
         renderer = new OrthogonalTiledMapRenderer(map, 1f / tileWidth);
 
         viewport = new FitViewport(map.getProperties().get("width", Integer.class), map.getProperties().get("height", Integer.class));
 
-        var builder = new TiledObjectLayerToBox2d(TiledObjectLayerToBox2dOptions.builder()
+        var builder = new TiledTileCollisionToBox2d(TiledTileCollisionToBox2dOptions.builder()
                 .scale(1f / tileWidth)
                 .throwOnInvalidObject(false)
                 .build());
@@ -65,6 +64,7 @@ public class ObjectParserTest extends LibgdxLwjglUnitTest {
         renderer.setView(((OrthographicCamera) viewport.getCamera()));
         renderer.render();
 
+        Gdx.gl.glLineWidth(3f);
         debugRenderer.render(world, viewport.getCamera().combined);
     }
 

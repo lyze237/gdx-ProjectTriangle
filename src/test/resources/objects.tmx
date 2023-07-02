@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="34" height="24" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="70">
+ <objectgroup id="2" name="Objects">
+  <object id="57" x="16" y="320" width="160" height="48"/>
+  <object id="58" x="128" y="272" width="48" height="48"/>
+  <object id="59" x="176" y="208" width="64" height="160"/>
+  <object id="60" x="240" y="208">
+   <polygon points="0,0 64,-32 96,-32 128,0 160,0 192,32 192,80 176,128 144,128 128,160 64,160 48,128 32,128 32,80 0,64"/>
+  </object>
+  <object id="61" x="64" y="112">
+   <polyline points="0,0 48,-32 128,-16 160,-48 208,-16 240,-16 272,16 320,-16 336,-48"/>
+  </object>
+  <object id="62" x="464" y="128" width="48" height="80"/>
+  <object id="64" x="496" y="256" width="32" height="32">
+   <ellipse/>
+  </object>
+  <object id="65" x="464" y="320" width="48" height="48">
+   <ellipse/>
+  </object>
+  <object id="66" x="448" y="32" width="48" height="48">
+   <ellipse/>
+  </object>
+  <object id="69" x="32" y="160" width="64" height="64">
+   <ellipse/>
+  </object>
+ </objectgroup>
+</map>
