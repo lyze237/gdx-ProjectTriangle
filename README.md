@@ -24,6 +24,15 @@ The supported map objects are:
 * Circle (=> Ellipse with width == height)
 * Polygon
 * Polyline (=> Unclosed polygon)
+
+[Example:](https://github.com/lyze237/gdx-ProjectTrianglePlatforming/blob/master/src/test/java/gdxUnBox2d/lwjgl/tests/ObjectParserTest.java)
+```java
+var builder = new TiledObjectLayerToBox2d(TiledObjectLayerToBox2dOptions.builder()
+        .scale(scale)
+        .build());
+
+builder.parseAllLayers(map, world);
+```
  
 | Tiled                                         | Box2D                                         |
 |-----------------------------------------------|-----------------------------------------------| 
@@ -41,6 +50,15 @@ The supported map objects are:
 * Polygon
 * Polyline (=> Unclosed polygon)
 
+[Example:](https://github.com/lyze237/gdx-ProjectTrianglePlatforming/blob/master/src/test/java/gdxUnBox2d/lwjgl/tests/TileCollisionTest.java)
+```java
+var builder = new TiledTileCollisionToBox2d(TiledTileCollisionToBox2dOptions.builder()
+        .scale(scale)
+        .build());
+
+builder.parseAllLayers(map, world);
+```
+
 | Tiled                                                      | Box2D                                                      |
 |------------------------------------------------------------|------------------------------------------------------------| 
 | ![Tile collision in Tiled](images/tiled_tileCollision.png) | ![Tile collision in Box2D](images/box2d_tileCollision.png) |
@@ -52,6 +70,15 @@ This just converts every tile in the layer into rectangles.
 The algorithm tries to create rectangles as wide as possible, and then if possible also extends them down.
 
 This reduces ghosting and is in my opinion the better way of doing it.
+
+[Example:](https://github.com/lyze237/gdx-ProjectTrianglePlatforming/blob/master/src/test/java/gdxUnBox2d/lwjgl/tests/TileCollisionTest.java)
+```java
+var builder = new TiledTileLayerToBox2d(TiledTileLayerToBox2dOptions.builder()
+        .scale(scale)
+        .build());
+
+builder.parseAllLayers(map, world);
+```
 
 | Tiled                                                       | Box2D                                                       |
 |-------------------------------------------------------------|-------------------------------------------------------------| 
