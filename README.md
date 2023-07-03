@@ -91,6 +91,10 @@ Additionally, there are a couple important features implemented:
 * Triangulation of polygons when needed
 * Merging of tiles and tile collisions to reduce ghosting issues
 
+You can ignore an object, tile collision object, or tile by adding a custom boolean property `ptpIgnore` and set it to `true`.
+
+![Screenshot of the Tiled Ignore property](images/tiled_ignore.png)
+
 ---
 
 ## Installation

@@ -68,7 +68,13 @@ public class TiledTileCollisionToBox2d {
         if (cell == null)
             return;
 
+        if (cell.getTile().getProperties().get("ptpIgnore", false, Boolean.class))
+            return;
+
         for (var obj : cell.getTile().getObjects()) {
+            if (obj.getProperties().get("ptpIgnore", false, Boolean.class))
+                continue;
+
             if (obj instanceof EllipseMapObject) {
                 extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse(), getMergeType(cell));
             } else if (obj instanceof RectangleMapObject) {

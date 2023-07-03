@@ -29,6 +29,9 @@ public class TiledObjectLayerToBox2d {
 
     public void parseLayer(MapLayer layer, World world) {
         for (var obj : layer.getObjects()) {
+            if (obj.getProperties().get("ptpIgnore", false, Boolean.class))
+                continue;
+
             if (obj instanceof EllipseMapObject) {
                 extractCircle(world, ((EllipseMapObject) obj).getEllipse());
             } else if (obj instanceof RectangleMapObject) {

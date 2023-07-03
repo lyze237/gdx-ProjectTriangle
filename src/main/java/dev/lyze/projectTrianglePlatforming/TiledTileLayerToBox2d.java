@@ -1,6 +1,5 @@
 package dev.lyze.projectTrianglePlatforming;
 
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -17,7 +16,7 @@ public class TiledTileLayerToBox2d {
     private final TiledTileLayerToBox2dOptions options;
 
     public void parseAllLayers(TiledMap map, World world) {
-        for (MapLayer layer : map.getLayers()) {
+        for (var layer : map.getLayers()) {
             if (layer instanceof TiledMapTileLayer)
                 parseLayer(((TiledMapTileLayer) layer), world);
         }
@@ -29,7 +28,11 @@ public class TiledTileLayerToBox2d {
             Bee bee = null;
             Bee previousBee = null;
             for (var x = 0; x < layer.getWidth(); x++) {
-                var isTile = layer.getCell(x, y) != null;
+                var cell = layer.getCell(x, y);
+                var isTile = cell != null;
+
+                if (isTile && cell.getTile().getProperties().get("ptpIgnore", false, Boolean.class))
+                    continue;
 
                 var finalX = x;
                 var foundBee = bees.stream().filter(b -> !b.closed && b.startPointX == finalX).findAny();
@@ -95,7 +98,7 @@ public class TiledTileLayerToBox2d {
     }
 
     private void drawBees(TiledMapTileLayer layer, World world, ArrayList<Bee> bees) {
-        for (Bee bee : bees) {
+        for (var bee : bees) {
             MapUtils.extractRectangle(world,
                     bee.startPointX * layer.getTileWidth() * options.getScale(),
                     (bee.startPointY - bee.height + 1) * layer.getTileHeight() * options.getScale(),
