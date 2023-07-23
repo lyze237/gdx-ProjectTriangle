@@ -102,13 +102,19 @@ You can ignore an object, tile collision object, or tile by adding a custom bool
 1. Open or create `gradle.properties` in the root folder of your project, add the following line:
 
 ```properties
-ptpVersion=6980fbac7a
-clipperVersion=2faa7779bd
+ptpVersion=PTPVERSION
+clipperVersion=CLIPPERVERSION
 ```
 
-Here are the up-to-date version numbers:
-* PTP: [![Jitpack](https://jitpack.io/v/lyze237/gdx-projecttriangleplatforming.svg)](https://jitpack.io/#lyze237/gdx-projecttriangleplatforming)
-* Clipper2: [![](https://jitpack.io/v/lyze237/gdx-Clipper2.svg)](https://jitpack.io/#lyze237/gdx-Clipper2)
+* Replace PTPVERSION with: [![Jitpack](https://jitpack.io/v/lyze237/gdx-projecttriangleplatforming.svg)](https://jitpack.io/#lyze237/gdx-projecttriangleplatforming)
+* Replace CLIPPERVERSION with: [![](https://jitpack.io/v/lyze237/gdx-Clipper2.svg)](https://jitpack.io/#lyze237/gdx-Clipper2)
+
+For example:
+
+```properties
+ptpVersion=0870dc3d97
+clipperVersion=2faa7779bd
+```
 
 2. Add the jitpack repo to your build file.
 
