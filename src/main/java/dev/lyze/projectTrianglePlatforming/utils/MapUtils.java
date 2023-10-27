@@ -7,8 +7,8 @@ import lombok.var;
 
 @UtilityClass
 public class MapUtils {
-    public void extractPolygon(World world, float[] vertices, ITriangulator triangulator) {
-        var body = Box2dUtils.createStaticBody(world);
+    public void extractPolygon(World world, float[] vertices, ITriangulator triangulator, String bodyType) {
+        var body = Box2dUtils.createBody(world, bodyType);
 
         var simplifiedVertices = PolygonUtils.simplifyPolygon(vertices);
 
@@ -35,8 +35,8 @@ public class MapUtils {
         shape.dispose();
     }
 
-    public void extractPolyline(World world, float[] vertices) {
-        var body = Box2dUtils.createStaticBody(world);
+    public void extractPolyline(World world, float[] vertices, String bodyType) {
+        var body = Box2dUtils.createBody(world, bodyType);
 
         var shape = new ChainShape();
         shape.createChain(vertices);
@@ -45,8 +45,8 @@ public class MapUtils {
         shape.dispose();
     }
 
-    public static void extractRectangle(World world, float x, float y, float width, float height) {
-        var bodyDef = Box2dUtils.createStaticBodyDef();
+    public static void extractRectangle(World world, float x, float y, float width, float height, String bodyType) {
+        var bodyDef = Box2dUtils.createBodyDef(bodyType);
         bodyDef.position.set(x + width / 2f, y + height / 2f);
 
         var body = world.createBody(bodyDef);
@@ -58,8 +58,8 @@ public class MapUtils {
         shape.dispose();
     }
 
-    public static void extractCircle(World world, float x, float y, float radius) {
-        var bodyDef = Box2dUtils.createStaticBodyDef();
+    public static void extractCircle(World world, float x, float y, float radius, String bodyType) {
+        var bodyDef = Box2dUtils.createBodyDef(bodyType);
         bodyDef.position.set(x, y);
 
         var body = world.createBody(bodyDef);

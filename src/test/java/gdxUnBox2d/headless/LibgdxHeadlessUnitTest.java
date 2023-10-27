@@ -5,6 +5,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.graphics.GL20;
+import dev.lyze.projectTrianglePlatforming.TiledTileCollisionToBox2d;
+import dev.lyze.projectTrianglePlatforming.TiledTileCollisionToBox2dOptions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;

@@ -6,17 +6,15 @@ import lombok.var;
 
 @UtilityClass
 public class Box2dUtils {
-    public BodyDef createStaticBodyDef() {
-        var bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
-
-        return bodyDef;
+    public Body createBody(World world, String bodyType) {
+        return world.createBody(createBodyDef(bodyType));
     }
 
-    public Body createStaticBody(World world) {
-        var bodyDef = createStaticBodyDef();
+    public BodyDef createBodyDef(String bodyType) {
+        var bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.valueOf(bodyType);
 
-        return world.createBody(bodyDef);
+        return bodyDef;
     }
 
     public Fixture createFixture(Body body, Shape shape) {

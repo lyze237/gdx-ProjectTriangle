@@ -50,10 +50,14 @@ The supported map objects are:
 * Polygon
 * Polyline (=> Unclosed polygon)
 
+By default, all tiles try to merge as good as possible. If you want certain tiles not to merge you can change their `ptpMergeType` to anything you want and the algorithm groups them based on this name.
+
 [Example:](https://github.com/lyze237/gdx-ProjectTrianglePlatforming/blob/master/src/test/java/gdxUnBox2d/lwjgl/tests/TileCollisionTest.java)
 ```java
 var builder = new TiledTileCollisionToBox2d(TiledTileCollisionToBox2dOptions.builder()
         .scale(scale)
+        .combineTileCollisions(true)
+        .triangulateInsteadOfThrow(true)
         .build());
 
 builder.parseAllLayers(map, world);
@@ -92,6 +96,8 @@ Additionally, there are a couple important features implemented:
 * Merging of tiles and tile collisions to reduce ghosting issues
 
 You can ignore an object, tile collision object, or tile by adding a custom boolean property `ptpIgnore` and set it to `true`.
+
+And at last you can change the type of the body by setting `ptpBodyType` to any of the 3 BodyDef types: `StaticBody`, `KinematicBody`, `DynamicBody`
 
 ![Screenshot of the Tiled Ignore property](images/tiled_ignore.png)
 

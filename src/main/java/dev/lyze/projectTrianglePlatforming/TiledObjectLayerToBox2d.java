@@ -32,38 +32,40 @@ public class TiledObjectLayerToBox2d {
             if (obj.getProperties().get("ptpIgnore", false, Boolean.class))
                 continue;
 
+            var bodyType = obj.getProperties().get("ptpBodyType", "StaticBody", String.class);
+
             if (obj instanceof EllipseMapObject) {
-                extractCircle(world, ((EllipseMapObject) obj).getEllipse());
+                extractCircle(world, ((EllipseMapObject) obj).getEllipse(), bodyType);
             } else if (obj instanceof RectangleMapObject) {
-                extractRectangle(world, ((RectangleMapObject) obj).getRectangle());
+                extractRectangle(world, ((RectangleMapObject) obj).getRectangle(), bodyType);
             } else if (obj instanceof PolylineMapObject) {
-                extractPolyline(world, ((PolylineMapObject) obj).getPolyline());
+                extractPolyline(world, ((PolylineMapObject) obj).getPolyline(), bodyType);
             } else if (obj instanceof PolygonMapObject) {
-                extractPolygon(world, ((PolygonMapObject) obj).getPolygon());
+                extractPolygon(world, ((PolygonMapObject) obj).getPolygon(), bodyType);
             }
         }
     }
 
-    private void extractPolygon(World world, Polygon polygon) {
+    private void extractPolygon(World world, Polygon polygon, String bodyType) {
         if (polygon.getVertices().length > 8 && !options.isTriangulateInsteadOfThrow())
             throw new IllegalArgumentException("Polygon vertices > 8");
 
         var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale());
 
-        MapUtils.extractPolygon(world, vertices, options.getTriangulator());
+        MapUtils.extractPolygon(world, vertices, options.getTriangulator(), bodyType);
     }
 
-    private void extractPolyline(World world, Polyline polyline) {
+    private void extractPolyline(World world, Polyline polyline, String dynamic) {
         var vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), options.getScale());
 
-        MapUtils.extractPolyline(world, vertices);
+        MapUtils.extractPolyline(world, vertices, dynamic);
     }
 
-    private void extractRectangle(World world, Rectangle rectangle) {
-        MapUtils.extractRectangle(world, rectangle.x * options.getScale(), rectangle.y * options.getScale(), rectangle.width * options.getScale(), rectangle.height * options.getScale());
+    private void extractRectangle(World world, Rectangle rectangle, String bodyType) {
+        MapUtils.extractRectangle(world, rectangle.x * options.getScale(), rectangle.y * options.getScale(), rectangle.width * options.getScale(), rectangle.height * options.getScale(), bodyType);
     }
 
-    private void extractCircle(World world, Ellipse ellipse) {
+    private void extractCircle(World world, Ellipse ellipse, String bodyType) {
         if (ellipse.width != ellipse.height) {
             if (options.isThrowOnInvalidObject())
                 throw new IllegalArgumentException("Ellipse objects not supported by Box2D");
@@ -71,6 +73,6 @@ public class TiledObjectLayerToBox2d {
             return;
         }
 
-        MapUtils.extractCircle(world, ellipse.x * options.getScale() + ellipse.width / 2f * options.getScale(), ellipse.y * options.getScale() + ellipse.height / 2f * options.getScale(), ellipse.width / 2f * options.getScale());
+        MapUtils.extractCircle(world, ellipse.x * options.getScale() + ellipse.width / 2f * options.getScale(), ellipse.y * options.getScale() + ellipse.height / 2f * options.getScale(), ellipse.width / 2f * options.getScale(), bodyType);
     }
 }
