@@ -1,19 +1,20 @@
 package dev.lyze.projectTrianglePlatforming.utils;
 
 import com.badlogic.gdx.physics.box2d.*;
+import dev.lyze.projectTrianglePlatforming.BodyFixtureOptions;
 import dev.lyze.projectTrianglePlatforming.triangulators.ITriangulator;
 import lombok.experimental.UtilityClass;
 import lombok.var;
 
 @UtilityClass
 public class MapUtils {
-    public void extractPolygon(World world, float[] vertices, ITriangulator triangulator, String bodyType) {
-        var body = Box2dUtils.createBody(world, bodyType);
+    public void extractPolygon(World world, float[] vertices, ITriangulator triangulator, BodyFixtureOptions options) {
+        var body = Box2dUtils.createBody(world, options);
 
         var simplifiedVertices = PolygonUtils.simplifyPolygon(vertices);
 
         if (simplifiedVertices.length / 2 <= 8 && !PolygonUtils.isConcave(simplifiedVertices)) {
-            createPolygonShape(body, simplifiedVertices);
+            createPolygonShape(body, simplifiedVertices, options);
         } else {
             var triangles = PolygonUtils.triangulate(simplifiedVertices, triangulator);
 
@@ -22,31 +23,31 @@ public class MapUtils {
                 if (PolygonUtils.areCollinear(floats[0], floats[1], floats[2], floats[3], floats[4], floats[5]))
                     continue;
 
-                createPolygonShape(body, floats);
+                createPolygonShape(body, floats, options);
             }
         }
     }
 
-    private void createPolygonShape(Body body, float[] vertices) {
+    private void createPolygonShape(Body body, float[] vertices, BodyFixtureOptions options) {
         var shape = new PolygonShape();
         shape.set(vertices);
 
-        Box2dUtils.createFixture(body, shape);
+        Box2dUtils.createFixture(body, shape, options);
         shape.dispose();
     }
 
-    public void extractPolyline(World world, float[] vertices, String bodyType) {
-        var body = Box2dUtils.createBody(world, bodyType);
+    public void extractPolyline(World world, float[] vertices, BodyFixtureOptions options) {
+        var body = Box2dUtils.createBody(world, options);
 
         var shape = new ChainShape();
         shape.createChain(vertices);
 
-        Box2dUtils.createFixture(body, shape);
+        Box2dUtils.createFixture(body, shape, options);
         shape.dispose();
     }
 
-    public static void extractRectangle(World world, float x, float y, float width, float height, String bodyType) {
-        var bodyDef = Box2dUtils.createBodyDef(bodyType);
+    public static void extractRectangle(World world, float x, float y, float width, float height, BodyFixtureOptions options) {
+        var bodyDef = options.toBodyDef();
         bodyDef.position.set(x + width / 2f, y + height / 2f);
 
         var body = world.createBody(bodyDef);
@@ -54,12 +55,12 @@ public class MapUtils {
         var shape = new PolygonShape();
         shape.setAsBox(width / 2f, height / 2f);
 
-        Box2dUtils.createFixture(body, shape);
+        Box2dUtils.createFixture(body, shape, options);
         shape.dispose();
     }
 
-    public static void extractCircle(World world, float x, float y, float radius, String bodyType) {
-        var bodyDef = Box2dUtils.createBodyDef(bodyType);
+    public static void extractCircle(World world, float x, float y, float radius, BodyFixtureOptions options) {
+        var bodyDef = options.toBodyDef();
         bodyDef.position.set(x, y);
 
         var body = world.createBody(bodyDef);
@@ -67,7 +68,7 @@ public class MapUtils {
         var shape = new CircleShape();
         shape.setRadius(radius);
 
-        Box2dUtils.createFixture(body, shape);
+        Box2dUtils.createFixture(body, shape, options);
         shape.dispose();
     }
 }

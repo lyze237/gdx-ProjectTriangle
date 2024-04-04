@@ -97,9 +97,11 @@ Additionally, there are a couple important features implemented:
 
 You can ignore an object, tile collision object, or tile by adding a custom boolean property `ptpIgnore` and set it to `true`.
 
-And at last you can change the type of the body by setting `ptpBodyType` to any of the 3 BodyDef types: `StaticBody`, `KinematicBody`, `DynamicBody`
-
 ![Screenshot of the Tiled Ignore property](images/tiled_ignore.png)
+
+And at last you can change the properties of the body or fixture setting the [appropriate properties](https://github.com/lyze237/gdx-ProjectTrianglePlatforming/blob/master/src/main/java/dev/lyze/projectTrianglePlatforming/BodyFixtureOptions.java#L12) of every object (and appending `ptp` to the property name).
+
+For example you can change the bodies type by setting `ptpType` to any of the 3 available enums `StaticBody`, `KinematicBody`, `DynamicBody` or change the bullet option by setting `ptpBullet` to true.
 
 ---
 

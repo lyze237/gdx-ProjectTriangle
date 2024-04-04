@@ -96,16 +96,16 @@ public class TiledTileLayerToBox2d {
         }
 
         // last bee can be false if it ends at x = layer.getWidth() - 1
-        drawBees(layer, world, bees, bodyType);
+        drawBees(layer, world, bees, new BodyFixtureOptions(layer.getProperties()));
     }
 
-    private void drawBees(TiledMapTileLayer layer, World world, ArrayList<Bee> bees, String bodyType) {
+    private void drawBees(TiledMapTileLayer layer, World world, ArrayList<Bee> bees, BodyFixtureOptions options) {
         for (var bee : bees) {
             MapUtils.extractRectangle(world,
-                    bee.startPointX * layer.getTileWidth() * options.getScale(),
-                    (bee.startPointY - bee.height + 1) * layer.getTileHeight() * options.getScale(),
-                    (bee.endPointX - bee.startPointX + 1) * layer.getTileWidth() * options.getScale(),
-                    bee.getHeight() * layer.getTileHeight() * options.getScale(), bodyType);
+                    bee.startPointX * layer.getTileWidth() * this.options.getScale(),
+                    (bee.startPointY - bee.height + 1) * layer.getTileHeight() * this.options.getScale(),
+                    (bee.endPointX - bee.startPointX + 1) * layer.getTileWidth() * this.options.getScale(),
+                    bee.getHeight() * layer.getTileHeight() * this.options.getScale(), options);
         }
     }
 

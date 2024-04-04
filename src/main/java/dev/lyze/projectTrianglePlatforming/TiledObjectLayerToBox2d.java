@@ -32,40 +32,38 @@ public class TiledObjectLayerToBox2d {
             if (obj.getProperties().get("ptpIgnore", false, Boolean.class))
                 continue;
 
-            var bodyType = obj.getProperties().get("ptpBodyType", "StaticBody", String.class);
-
             if (obj instanceof EllipseMapObject) {
-                extractCircle(world, ((EllipseMapObject) obj).getEllipse(), bodyType);
+                extractCircle(world, ((EllipseMapObject) obj).getEllipse(), new BodyFixtureOptions(obj.getProperties()));
             } else if (obj instanceof RectangleMapObject) {
-                extractRectangle(world, ((RectangleMapObject) obj).getRectangle(), bodyType);
+                extractRectangle(world, ((RectangleMapObject) obj).getRectangle(), new BodyFixtureOptions(obj.getProperties()));
             } else if (obj instanceof PolylineMapObject) {
-                extractPolyline(world, ((PolylineMapObject) obj).getPolyline(), bodyType);
+                extractPolyline(world, ((PolylineMapObject) obj).getPolyline(), new BodyFixtureOptions(obj.getProperties()));
             } else if (obj instanceof PolygonMapObject) {
-                extractPolygon(world, ((PolygonMapObject) obj).getPolygon(), bodyType);
+                extractPolygon(world, ((PolygonMapObject) obj).getPolygon(), new BodyFixtureOptions(obj.getProperties()));
             }
         }
     }
 
-    private void extractPolygon(World world, Polygon polygon, String bodyType) {
-        if (polygon.getVertices().length > 8 && !options.isTriangulateInsteadOfThrow())
+    private void extractPolygon(World world, Polygon polygon, BodyFixtureOptions options) {
+        if (polygon.getVertices().length > 8 && !this.options.isTriangulateInsteadOfThrow())
             throw new IllegalArgumentException("Polygon vertices > 8");
 
-        var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale());
+        var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), this.options.getScale());
 
-        MapUtils.extractPolygon(world, vertices, options.getTriangulator(), bodyType);
+        MapUtils.extractPolygon(world, vertices, this.options.getTriangulator(), options);
     }
 
-    private void extractPolyline(World world, Polyline polyline, String dynamic) {
-        var vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), options.getScale());
+    private void extractPolyline(World world, Polyline polyline, BodyFixtureOptions options) {
+        var vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), this.options.getScale());
 
-        MapUtils.extractPolyline(world, vertices, dynamic);
+        MapUtils.extractPolyline(world, vertices, options);
     }
 
-    private void extractRectangle(World world, Rectangle rectangle, String bodyType) {
-        MapUtils.extractRectangle(world, rectangle.x * options.getScale(), rectangle.y * options.getScale(), rectangle.width * options.getScale(), rectangle.height * options.getScale(), bodyType);
+    private void extractRectangle(World world, Rectangle rectangle, BodyFixtureOptions options) {
+        MapUtils.extractRectangle(world, rectangle.x * this.options.getScale(), rectangle.y * this.options.getScale(), rectangle.width * this.options.getScale(), rectangle.height * this.options.getScale(), options);
     }
 
-    private void extractCircle(World world, Ellipse ellipse, String bodyType) {
+    private void extractCircle(World world, Ellipse ellipse, BodyFixtureOptions bodyType) {
         if (ellipse.width != ellipse.height) {
             if (options.isThrowOnInvalidObject())
                 throw new IllegalArgumentException("Ellipse objects not supported by Box2D");

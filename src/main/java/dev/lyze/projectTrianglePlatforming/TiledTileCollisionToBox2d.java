@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import dev.lyze.clipper2.Clipper;
 import dev.lyze.clipper2.core.FillRule;
@@ -30,6 +31,8 @@ public class TiledTileCollisionToBox2d {
     private final TiledTileCollisionToBox2dOptions options;
 
     @Getter private final Array<float[]> computedPolygons = new Array<>();
+
+    private final ObjectMap<String, BodyFixtureOptions> bodyFixtureOptionsMap = new ObjectMap<>();
 
 
     public void parseAllLayers(TiledMap map, World world) {
@@ -60,7 +63,9 @@ public class TiledTileCollisionToBox2d {
                 }
 
                 computedPolygons.add(vertices);
-                MapUtils.extractPolygon(world, vertices, options.getTriangulator(), subject.key.substring(subject.key.lastIndexOf("_") + 1));
+
+                var bodyFixtureOptions = bodyFixtureOptionsMap.get(subject.key.substring(subject.key.lastIndexOf("_") + 1));
+                MapUtils.extractPolygon(world, vertices, options.getTriangulator(), bodyFixtureOptions);
             }
         }
     }
@@ -77,21 +82,19 @@ public class TiledTileCollisionToBox2d {
             if (obj.getProperties().get("ptpIgnore", false, Boolean.class))
                 continue;
 
-            var bodyType = cell.getTile().getProperties().get("ptpMergeType", "default", String.class);
-
             if (obj instanceof EllipseMapObject) {
-                extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse(), getMergeType(cell), bodyType);
+                extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
             } else if (obj instanceof RectangleMapObject) {
-                extractRectangle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((RectangleMapObject) obj).getRectangle(), getMergeType(cell), bodyType);
+                extractRectangle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((RectangleMapObject) obj).getRectangle(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
             } else if (obj instanceof PolylineMapObject) {
-                extractPolyline(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolylineMapObject) obj).getPolyline(), getMergeType(cell), bodyType);
+                extractPolyline(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolylineMapObject) obj).getPolyline(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
             } else if (obj instanceof PolygonMapObject) {
-                extractPolygon(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolygonMapObject) obj).getPolygon(), getMergeType(cell), bodyType);
+                extractPolygon(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolygonMapObject) obj).getPolygon(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
             }
         }
     }
 
-    private void extractPolygon(World world, int x, int y, ObjectMap<String, PathsD> subjects, Polygon polygon, String mergeType, String bodyType) {
+    private void extractPolygon(World world, int x, int y, ObjectMap<String, PathsD> subjects, Polygon polygon, String mergeType, BodyFixtureOptions bodyFixtureOptions) {
         var vertices = PolygonUtils.transformVertices(polygon.getTransformedVertices(), options.getScale(), x * options.getScale(), y * options.getScale());
 
         if (options.isCombineTileCollisions()) {
@@ -101,17 +104,17 @@ public class TiledTileCollisionToBox2d {
             if (polygon.getVertices().length > 8 && !options.isTriangulateInsteadOfThrow())
                 throw new IllegalArgumentException("Polygon vertices > 8");
             
-            MapUtils.extractPolygon(world, vertices, options.getTriangulator(), bodyType);
+            MapUtils.extractPolygon(world, vertices, options.getTriangulator(), bodyFixtureOptions);
         }
     }
 
-    private void extractPolyline(World world, int x, int y, ObjectMap<String, PathsD> subjects, Polyline polyline, String mergeType, String bodyType) {
+    private void extractPolyline(World world, int x, int y, ObjectMap<String, PathsD> subjects, Polyline polyline, String mergeType, BodyFixtureOptions bodyFixtureOptions) {
         var vertices = PolygonUtils.transformVertices(polyline.getTransformedVertices(), options.getScale(), x * options.getScale(), y * options.getScale());
 
-        MapUtils.extractPolyline(world, vertices, bodyType);
+        MapUtils.extractPolyline(world, vertices, bodyFixtureOptions);
     }
 
-    private void extractRectangle(World world, int x, int y, ObjectMap<String, PathsD> subjects, Rectangle rectangle, String mergeType, String bodyType) {
+    private void extractRectangle(World world, int x, int y, ObjectMap<String, PathsD> subjects, Rectangle rectangle, String mergeType, BodyFixtureOptions bodyFixtureOptions) {
         if (options.isCombineTileCollisions()) {
             var vertices = new double[]{
                     x * options.getScale() + rectangle.x * options.getScale(), y * options.getScale() + rectangle.y * options.getScale(),
@@ -122,11 +125,11 @@ public class TiledTileCollisionToBox2d {
 
             createOrAdd(subjects, mergeType, Clipper.MakePath(vertices));
         } else {
-            MapUtils.extractRectangle(world, x * options.getScale() + rectangle.x * options.getScale(), y * options.getScale() + rectangle.y * options.getScale(), rectangle.width * options.getScale(), rectangle.height * options.getScale(), bodyType);
+            MapUtils.extractRectangle(world, x * options.getScale() + rectangle.x * options.getScale(), y * options.getScale() + rectangle.y * options.getScale(), rectangle.width * options.getScale(), rectangle.height * options.getScale(), bodyFixtureOptions);
         }
     }
 
-    private void extractCircle(World world, int x, int y, ObjectMap<String, PathsD> subjects, Ellipse ellipse, String mergeType, String bodyType) {
+    private void extractCircle(World world, int x, int y, ObjectMap<String, PathsD> subjects, Ellipse ellipse, String mergeType, BodyFixtureOptions bodyFixtureOptions) {
         if (ellipse.width != ellipse.height) {
             if (options.isThrowOnInvalidObject())
                 throw new IllegalArgumentException("Ellipse objects not supported by Box2D");
@@ -134,7 +137,7 @@ public class TiledTileCollisionToBox2d {
             return;
         }
 
-        MapUtils.extractCircle(world, x * options.getScale() + ellipse.x * options.getScale() + ellipse.width / 2f * options.getScale(), y * options.getScale() + ellipse.y * options.getScale() + ellipse.height / 2f * options.getScale(), ellipse.width / 2f * options.getScale(), bodyType);
+        MapUtils.extractCircle(world, x * options.getScale() + ellipse.x * options.getScale() + ellipse.width / 2f * options.getScale(), y * options.getScale() + ellipse.y * options.getScale() + ellipse.height / 2f * options.getScale(), ellipse.width / 2f * options.getScale(), bodyFixtureOptions);
     }
 
     private void createOrAdd(ObjectMap<String, PathsD> map, String type, PathD path) {
@@ -146,8 +149,12 @@ public class TiledTileCollisionToBox2d {
 
     private String getMergeType(TiledMapTileLayer.Cell cell) {
         var mergeType = cell.getTile().getProperties().get("ptpMergeType", "default", String.class);
-        var bodyType = cell.getTile().getProperties().get("ptpBodyType", "StaticBody", String.class);
+        var bodyFixtureOptions = new BodyFixtureOptions(cell.getTile().getProperties());
+        var bodyFixtureOptionsHash = String.valueOf(bodyFixtureOptions.hashCode());
 
-        return mergeType + "_" + bodyType;
+        if (!bodyFixtureOptionsMap.containsKey(bodyFixtureOptionsHash))
+            bodyFixtureOptionsMap.put(bodyFixtureOptionsHash, bodyFixtureOptions);
+
+        return mergeType + "_" + bodyFixtureOptionsHash;
     }
 }
