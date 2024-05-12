@@ -96,7 +96,7 @@ public class TiledTileLayerToBox2d {
         }
 
         // last bee can be false if it ends at x = layer.getWidth() - 1
-        drawBees(layer, world, bees, new BodyFixtureOptions(layer.getProperties()));
+        drawBees(layer, world, bees, new BodyFixtureOptions(layer, layer.getProperties()));
     }
 
     private void drawBees(TiledMapTileLayer layer, World world, ArrayList<Bee> bees, BodyFixtureOptions options) {

@@ -83,13 +83,13 @@ public class TiledTileCollisionToBox2d {
                 continue;
 
             if (obj instanceof EllipseMapObject) {
-                extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
+                extractCircle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((EllipseMapObject) obj).getEllipse(), getMergeType(cell), new BodyFixtureOptions(obj, cell.getTile().getProperties()));
             } else if (obj instanceof RectangleMapObject) {
-                extractRectangle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((RectangleMapObject) obj).getRectangle(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
+                extractRectangle(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((RectangleMapObject) obj).getRectangle(), getMergeType(cell), new BodyFixtureOptions(obj, cell.getTile().getProperties()));
             } else if (obj instanceof PolylineMapObject) {
-                extractPolyline(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolylineMapObject) obj).getPolyline(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
+                extractPolyline(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolylineMapObject) obj).getPolyline(), getMergeType(cell), new BodyFixtureOptions(obj, cell.getTile().getProperties()));
             } else if (obj instanceof PolygonMapObject) {
-                extractPolygon(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolygonMapObject) obj).getPolygon(), getMergeType(cell), new BodyFixtureOptions(cell.getTile().getProperties()));
+                extractPolygon(world, x * layer.getTileWidth(), y * layer.getTileHeight(), subjects, ((PolygonMapObject) obj).getPolygon(), getMergeType(cell), new BodyFixtureOptions(obj, cell.getTile().getProperties()));
             }
         }
     }
@@ -149,7 +149,7 @@ public class TiledTileCollisionToBox2d {
 
     private String getMergeType(TiledMapTileLayer.Cell cell) {
         var mergeType = cell.getTile().getProperties().get("ptpMergeType", "default", String.class);
-        var bodyFixtureOptions = new BodyFixtureOptions(cell.getTile().getProperties());
+        var bodyFixtureOptions = new BodyFixtureOptions(cell.getTile(), cell.getTile().getProperties());
         var bodyFixtureOptionsHash = String.valueOf(bodyFixtureOptions.hashCode());
 
         if (!bodyFixtureOptionsMap.containsKey(bodyFixtureOptionsHash))

@@ -10,6 +10,7 @@ import lombok.var;
 public class MapUtils {
     public void extractPolygon(World world, float[] vertices, ITriangulator triangulator, BodyFixtureOptions options) {
         var body = Box2dUtils.createBody(world, options);
+        body.setUserData(options);
 
         var simplifiedVertices = PolygonUtils.simplifyPolygon(vertices);
 
@@ -32,17 +33,20 @@ public class MapUtils {
         var shape = new PolygonShape();
         shape.set(vertices);
 
-        Box2dUtils.createFixture(body, shape, options);
+        var fixture = Box2dUtils.createFixture(body, shape, options);
+        fixture.setUserData(options.getOwner());
         shape.dispose();
     }
 
     public void extractPolyline(World world, float[] vertices, BodyFixtureOptions options) {
         var body = Box2dUtils.createBody(world, options);
+        body.setUserData(options.getOwner());
 
         var shape = new ChainShape();
         shape.createChain(vertices);
 
-        Box2dUtils.createFixture(body, shape, options);
+        var fixture = Box2dUtils.createFixture(body, shape, options);
+        fixture.setUserData(options.getOwner());
         shape.dispose();
     }
 
@@ -51,11 +55,13 @@ public class MapUtils {
         bodyDef.position.set(x + width / 2f, y + height / 2f);
 
         var body = world.createBody(bodyDef);
+        body.setUserData(options.getOwner());
 
         var shape = new PolygonShape();
         shape.setAsBox(width / 2f, height / 2f);
 
-        Box2dUtils.createFixture(body, shape, options);
+        var fixture = Box2dUtils.createFixture(body, shape, options);
+        fixture.setUserData(options.getOwner());
         shape.dispose();
     }
 
@@ -64,11 +70,13 @@ public class MapUtils {
         bodyDef.position.set(x, y);
 
         var body = world.createBody(bodyDef);
+        body.setUserData(options.getOwner());
 
         var shape = new CircleShape();
         shape.setRadius(radius);
 
-        Box2dUtils.createFixture(body, shape, options);
+        var fixture = Box2dUtils.createFixture(body, shape, options);
+        fixture.setUserData(options.getOwner());
         shape.dispose();
     }
 }

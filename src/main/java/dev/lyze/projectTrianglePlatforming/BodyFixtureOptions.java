@@ -5,11 +5,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.var;
 
 @EqualsAndHashCode
 public class BodyFixtureOptions {
-    public BodyFixtureOptions(MapProperties mapProperties) {
+    @Getter private final Object owner;
+
+    public BodyFixtureOptions(Object owner, MapProperties mapProperties) {
+        this.owner = owner;
+
         type = BodyDef.BodyType.valueOf(mapProperties.get("ptpType", "StaticBody", String.class));
         angle = mapProperties.get("ptpAngle", 0f, Float.class);
         linearVelocity.x = mapProperties.get("ptpLinearVelocityX", 0f, Float.class);

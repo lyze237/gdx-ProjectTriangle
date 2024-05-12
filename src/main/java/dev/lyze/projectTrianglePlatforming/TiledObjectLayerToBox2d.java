@@ -33,13 +33,13 @@ public class TiledObjectLayerToBox2d {
                 continue;
 
             if (obj instanceof EllipseMapObject) {
-                extractCircle(world, ((EllipseMapObject) obj).getEllipse(), new BodyFixtureOptions(obj.getProperties()));
+                extractCircle(world, ((EllipseMapObject) obj).getEllipse(), new BodyFixtureOptions(obj, obj.getProperties()));
             } else if (obj instanceof RectangleMapObject) {
-                extractRectangle(world, ((RectangleMapObject) obj).getRectangle(), new BodyFixtureOptions(obj.getProperties()));
+                extractRectangle(world, ((RectangleMapObject) obj).getRectangle(), new BodyFixtureOptions(obj, obj.getProperties()));
             } else if (obj instanceof PolylineMapObject) {
-                extractPolyline(world, ((PolylineMapObject) obj).getPolyline(), new BodyFixtureOptions(obj.getProperties()));
+                extractPolyline(world, ((PolylineMapObject) obj).getPolyline(), new BodyFixtureOptions(obj, obj.getProperties()));
             } else if (obj instanceof PolygonMapObject) {
-                extractPolygon(world, ((PolygonMapObject) obj).getPolygon(), new BodyFixtureOptions(obj.getProperties()));
+                extractPolygon(world, ((PolygonMapObject) obj).getPolygon(), new BodyFixtureOptions(obj, obj.getProperties()));
             }
         }
     }
